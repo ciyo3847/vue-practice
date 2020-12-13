@@ -1,4 +1,0 @@
-{
-	"toChildCode": "<div class='item'><h4>父组件单向传递给子组件</h4><div class='far'>	<label>父组件数据: </label>	<input v-model='toChildData' type='text'/></div><ToChild class='child' :toChildData='toChildData'/><a href='javascript:;' class='extra' @click='showToChildCode'>show code</a></div>import ToChild from './_toChild.vue'export default {name: 'DataTransform',components: { ToChild,},data () {return {toChildData: '',},}},
-  		"
-}

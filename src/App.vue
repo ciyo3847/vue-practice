@@ -1,7 +1,7 @@
 <!--
  * @Author: YZY
  * @Date: 2020-03-27 16:52:49
- * @LastEditTime: 2020-09-02 09:51:37
+ * @LastEditTime: 2020-09-25 11:25:03
  * @FilePath: /vue-practice/src/App.vue
  * @Description: 
 -->
@@ -11,6 +11,7 @@
       <router-link to="/data-transform">vue组件之间的数据传输</router-link>
       <router-link to="/about">About</router-link>
       <router-link to="/render">render 函数练习</router-link>
+      <router-link to="/grandpa">祖孙组件通讯</router-link>
     </div>
     <router-view class="content"/>
   </div>
