@@ -1,23 +1,20 @@
 <template>
   <div>
-	<label>子组件数据: </label>
+	<label>子组件B数据: </label>
 	<input v-model="childValue" type="text"/>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Bidirectional4',
+  name: 'BrotherB1',
   props: {
-  	multipleData: String,
+    brotherData1: String,
   },
   computed: {
     childValue: {
       get () {
-        return this.multipleData
-      },
-      set (value) {
-        this.$emit('changeDate', value)
+        return this.brotherData1
       },
     },
   },

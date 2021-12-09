@@ -8,11 +8,11 @@
   			<input v-model="toChildData" type="text"/>
   		</div>
   		<ToChild class="child" :toChildData="toChildData"/>
-  		<p class="extra">
+  		<!-- <p class="extra">
         <a href="javascript:;" v-if="!isToChildCode" @click="() => isToChildCode = true">show code</a>
   			<a href="javascript:;" v-else @click="() => isToChildCode = false">hide code</a>
   		</p>
-      <ToChildCode v-show="isToChildCode"/>
+      <ToChildCode v-show="isToChildCode"/> -->
   	</div>
   	<div class="item">
   		<h4>子组件单向传递给父组件</h4>
@@ -21,11 +21,6 @@
   			<input v-model="toFatherData" type="text"/>
   		</div>
   		<ToFather class="child" @onToFather="onToFather"/>
-      <p class="extra">
-        <a href="javascript:;" v-if="!isToFatherCode" @click="() => isToFatherCode = true">show code</a>
-        <a href="javascript:;" v-else @click="() => isToFatherCode = false">hide code</a>
-      </p>
-      <ToFatherCode v-show="isToFatherCode"/>
   	</div>
   	<div class="item">
   		<h4>父子组件双向数据传输，使用v-model实现，适用于只有一个参数需要双向绑定时，</h4>
@@ -34,11 +29,6 @@
   			<input v-model="singleData" type="text"/>
   		</div>
   		<Bidirectional1 class="child" v-model="singleData"/>
-      <p class="extra">
-        <a href="javascript:;" v-if="!isBidirectional1Code" @click="() => isBidirectional1Code = true">show code</a>
-        <a href="javascript:;" v-else @click="() => isBidirectional1Code = false">hide code</a>
-      </p>
-      <Bidirectional1Code v-show="isBidirectional1Code"/>
   	</div>
     <div class="item">
       <h4>父子组件双向数据传输，使用.sync 修饰符实现，</h4>
@@ -53,11 +43,6 @@
         <input v-model="multipleData" type="text"/>
       </div>
       <Bidirectional2 class="child" :multipleData.sync="multipleData"/>
-      <p class="extra">
-        <a href="javascript:;" v-if="!isBidirectional2Code" @click="() => isBidirectional2Code = true">show code</a>
-        <a href="javascript:;" v-else @click="() => isBidirectional2Code = false">hide code</a>
-      </p>
-      <Bidirectional2Code v-show="isBidirectional2Code"/>
       <!-- end -->
       <div class="far" style="margin-top: 10px;">
         <label>多参数父组件数据: </label>
@@ -65,11 +50,6 @@
         <input v-model="multipleDataObj.dataTwo"  style="margin-left: 10px" type="text"/>
       </div>
       <Bidirectional3 class="child" v-bind.sync="multipleDataObj"/>
-      <p class="extra">
-        <a href="javascript:;" v-if="!isBidirectional3Code" @click="() => isBidirectional3Code = true">show code</a>
-        <a href="javascript:;" v-else @click="() => isBidirectional3Code = false">hide code</a>
-      </p>
-      <Bidirectional3Code v-show="isBidirectional3Code"/>
     </div>
     <div class="item">
       <h4>父子组件双向数据传输，通过$on, $emit实现</h4>
@@ -78,11 +58,36 @@
         <input v-model="multipleData3" type="text"/>
       </div>
       <Bidirectional4 class="child" :multipleData="multipleData3" @changeDate="changeMultipleData"/>
-      <p class="extra">
-        <a href="javascript:;" v-if="!isBidirectional4Code" @click="() => isBidirectional4Code = true">show code</a>
-        <a href="javascript:;" v-else @click="() => isBidirectional4Code = false">hide code</a>
-      </p>
-      <Bidirectional4Code v-show="isBidirectional4Code"/>
+    </div>
+    <div class="item">
+      <h4>兄弟组件数据传递，使用父组件做中转</h4>
+      <div class="far">
+        <label>父组件数据: </label>
+        <span>{{ brotherData1 }}</span>
+      </div>
+      <BrotherA1 class="child" @changeDate="changeBrotherData"></BrotherA1>
+      <BrotherB1 class="child" :brotherData1="brotherData1"></BrotherB1>
+    </div>
+    <div class="item">
+      <h4>兄弟组件数据传递，Bus中央事件总线</h4>
+      <p>使用bus需要注意两点: </p>
+      <ol>
+        <li>$on应该在 created钩子内使用，如果在mounted使用，它可能接受不到其他组件来自created钩子发出的事件</li>
+        <li>使用on后，在beforeDestroy钩子里应该使用off解除。因为组件销毁后，就没必要把监听的句柄储存在bus里。</li>
+      </ol>
+      <div class="far">
+        <label>父组件数据: </label>
+      </div>
+      <BrotherA2 class="child"></BrotherA2>
+      <BrotherB2 class="child"></BrotherB2>
+    </div>
+    <div class="item">
+      <h4>祖孙组件数据传递</h4>
+      <div class="far">
+        <label>祖组件数据:</label>
+        <input v-model="grandchildData" type="text"/>
+      </div>
+      <ChildFather class="child"></ChildFather>
     </div>
   </div>
 </template>
@@ -94,28 +99,31 @@ import Bidirectional1 from './_bidirectional1.vue'
 import Bidirectional2 from './_bidirectional2.vue'
 import Bidirectional3 from './_bidirectional3.vue'
 import Bidirectional4 from './_bidirectional4.vue'
-import ToChildCode from '../code/toChildCode.vue'
-import ToFatherCode from '../code/toFatherCode.vue'
-import Bidirectional1Code from '../code/bidirectional1.vue'
-import Bidirectional2Code from '../code/bidirectional2.vue'
-import Bidirectional3Code from '../code/bidirectional3.vue'
-import Bidirectional4Code from '../code/bidirectional4.vue'
+import BrotherA1 from './_brotherA1.vue'
+import BrotherB1 from './_brotherB1.vue'
+import BrotherA2 from './_brotherA2.vue'
+import BrotherB2 from './_brotherB2.vue'
+import ChildFather from './_childFather.vue'
 /* eslint-disable */
 export default {
   name: 'DataTransform',
   components: {
   	ToChild,
-    ToChildCode,
   	ToFather,
-    ToFatherCode,
   	Bidirectional1,
-    Bidirectional1Code,
     Bidirectional2,
-    Bidirectional2Code,
     Bidirectional3,
-    Bidirectional3Code,
     Bidirectional4,
-    Bidirectional4Code,
+    BrotherA1,
+    BrotherB1,
+    BrotherA2,
+    BrotherB2,
+    ChildFather,
+  },
+  provide () {
+    return {
+      grandchildData: () => this.grandchildData,
+    }
   },
   data () {
   	return {
@@ -128,12 +136,9 @@ export default {
         dataTwo: '',
       },
       multipleData3: '',
-      isToChildCode: false,
-      isToFatherCode: false,
-      isBidirectional1Code: false,
-      isBidirectional2Code: false,
-      isBidirectional3Code: false,
-      isBidirectional4Code: false,
+      brotherData1: '',
+      brotherData2: '',
+      grandchildData: '',
   	}
   },
   mounted () {
@@ -145,11 +150,19 @@ export default {
     changeMultipleData (value) {
       this.multipleData3 = value
     },
+    changeBrotherData (value) {
+      this.brotherData1 = value
+    },
   },
 }
 </script>
 <style lang="less" scoped>
 	@import "../../../node_modules/highlight.js/styles/monokai-sublime.css";
+  ol {
+    margin-left: 20px;
+    list-style-position: inside;
+    margin-bottom: 10px;
+  }
 	.item {
 		padding: 10px;
 		border-radius: 5px;
